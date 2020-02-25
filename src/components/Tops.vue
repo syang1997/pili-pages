@@ -36,7 +36,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>
@@ -68,7 +68,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>
@@ -100,7 +100,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>
@@ -132,7 +132,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>
@@ -164,7 +164,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>
@@ -196,7 +196,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>
@@ -228,7 +228,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>
@@ -260,7 +260,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>
@@ -292,7 +292,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>
@@ -324,7 +324,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>
@@ -356,7 +356,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>
@@ -388,7 +388,7 @@
                                     </div>
                                 </div>
                                 <div class="pts">
-                                    <div>{{item.hits*100}}</div>
+                                    <div>{{item.hits*10+item.replies*100}}</div>
                                     综合得分
                                 </div>
                             </div>

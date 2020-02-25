@@ -9,67 +9,67 @@
                    </li>
                    <li class="item">
                        <a href="#" class="link">
-                           <div class="num"><i>887</i></div>
+                           <div class="num"><i>{{day[0]}}</i></div>
                            动画
                        </a>
                    </li>
                    <li class="item">
                        <a href="#" class="link">
-                           <div class="num"><i>999+</i></div>
+                           <div class="num"><i>{{day[1]}}</i></div>
                            音乐
                        </a>
                    </li>
                    <li class="item">
                        <a href="#" class="link">
-                           <div class="num"><i>152</i></div>
+                           <div class="num"><i>{{day[2]}}</i></div>
                            舞蹈
                        </a>
                    </li>
                    <li class="item">
                        <a href="#" class="link">
-                           <div class="num"><i>999+</i></div>
+                           <div class="num"><i>{{day[3]}}</i></div>
                            游戏
                        </a>
                    </li>
                    <li class="item">
                        <a href="#" class="link">
-                           <div class="num"><i>999+</i></div>
+                           <div class="num"><i>{{day[4]}}</i></div>
                            科技
                        </a>
                    </li>
                    <li class="item">
                        <a href="#" class="link">
-                           <div class="num"><i>999+</i></div>
+                           <div class="num"><i>{{day[5]}}</i></div>
                            生活
                        </a>
                    </li>
                    <li class="item">
                        <a href="#" class="link">
-                           <div class="num"><i>77</i></div>
+                           <div class="num"><i>{{day[6]}}</i></div>
                            鬼畜
                        </a>
                    </li>
                    <li class="item">
                        <a href="#" class="link">
-                           <div class="num"><i>416</i></div>
+                           <div class="num"><i>{{day[7]}}</i></div>
                            时尚
                        </a>
                    </li>
                    <li class="item">
                        <a href="#" class="link">
-                           <div class="num"><i>100</i></div>
+                           <div class="num"><i>{{day[8]}}</i></div>
                            广告
                        </a>
                    </li>
                    <li class="item">
                        <a href="#" class="link">
-                           <div class="num"><i>999+</i></div>
+                           <div class="num"><i>{{day[9]}}</i></div>
                            娱乐
                        </a>
                    </li>
                    <li class="item">
                        <a href="#" class="link">
-                           <div class="num"><i>916</i></div>
+                           <div class="num"><i>{{day[10]}}</i></div>
                            影视
                        </a>
                    </li>
@@ -107,69 +107,17 @@
                </div>
                <div class="banner-list fr">
                    <ul>
-                       <li>
+                       <li v-for="item in tj" :key="item.value">
                            <a href="#">
-                               <img src="images/cont/main_pic.jpg" alt="#">
+                               <img :src="item.cover" alt="#">
                                <div class="info">
-                                   <p class="title">【初音ミク】39 TECHNO【八王子P】</p>
-                                   <p class="author">up主：丧尸の桑</p>
-                                   <p class="play">播放：48243</p>
-                               </div>
-                           </a>
-                       </li>
-                       <li>
-                           <a href="#">
-                               <img src="images/cont/main_pic.jpg" alt="#">
-                               <div class="info">
-                                   <p class="title">【初音ミク】39 TECHNO【八王子P】</p>
-                                   <p class="author">up主：丧尸の桑</p>
-                                   <p class="play">播放：48243</p>
-                               </div>
-                           </a>
-                       </li>
-                       <li>
-                           <a href="#">
-                               <img src="images/cont/main_pic.jpg" alt="#">
-                               <div class="info">
-                                   <p class="title">【初音ミク】39 TECHNO【八王子P】</p>
-                                   <p class="author">up主：丧尸の桑</p>
-                                   <p class="play">播放：48243</p>
-                               </div>
-                           </a>
-                       </li>
-                       <li>
-                           <a href="#">
-                               <img src="images/cont/main_pic.jpg" alt="#">
-                               <div class="info">
-                                   <p class="title">【初音ミク】39 TECHNO【八王子P】</p>
-                                   <p class="author">up主：丧尸の桑</p>
-                                   <p class="play">播放：48243</p>
-                               </div>
-                           </a>
-                       </li>
-                       <li>
-                           <a href="#">
-                               <img src="images/cont/main_pic.jpg" alt="#">
-                               <div class="info">
-                                   <p class="title">【初音ミク】39 TECHNO【八王子P】</p>
-                                   <p class="author">up主：丧尸の桑</p>
-                                   <p class="play">播放：48243</p>
-                               </div>
-                           </a>
-                       </li>
-                       <li>
-                           <a href="#">
-                               <img src="images/cont/main_pic.jpg" alt="#">
-                               <div class="info">
-                                   <p class="title">【初音ミク】39 TECHNO【八王子P】</p>
-                                   <p class="author">up主：丧尸の桑</p>
-                                   <p class="play">播放：48243</p>
+                                   <p class="title">{{item.vname}}</p>
+                                   <p class="author">up主：{{item.author.name}}</p>
+                                   <p class="play">{{item.hits}}</p>
                                </div>
                            </a>
                        </li>
                    </ul>
-                   <a href="#" class="btn btn-prev">昨日</a>
-                   <a href="#" class="btn btn-next">一周</a>
                </div>
            </div>
        </div>
@@ -189,7 +137,7 @@
                            </div>
                            <a href="#" class="main-link"><i></i>我的十月新番打开方式一定有问题</a>
                            <div class="more-wrap">
-                               <a href="#" class="dynamic"><i></i>392条新动态</a>
+                               <a href="#" class="dynamic"><i></i>{{day[0]}}</a>
                                <a href="#" class="more">更多<i></i></a>
                            </div>
                        </div>
@@ -266,7 +214,7 @@
                            </div>
                            <a href="#" class="main-link"><i></i>我的十月新番打开方式一定有问题</a>
                            <div class="more-wrap">
-                               <a href="#" class="dynamic"><i></i>392条新动态</a>
+                               <a href="#" class="dynamic"><i></i>{{day[1]}}</a>
                                <a href="#" class="more">更多<i></i></a>
                            </div>
                        </div>
@@ -343,7 +291,7 @@
                            </div>
                            <a href="#" class="main-link"><i></i>我的十月新番打开方式一定有问题</a>
                            <div class="more-wrap">
-                               <a href="#" class="dynamic"><i></i>392条新动态</a>
+                               <a href="#" class="dynamic"><i></i>{{day[2]}}</a>
                                <a href="#" class="more">更多<i></i></a>
                            </div>
                        </div>
@@ -421,7 +369,7 @@
                            </div>
                            <a href="#" class="main-link"><i></i>我的十月新番打开方式一定有问题</a>
                            <div class="more-wrap">
-                               <a href="#" class="dynamic"><i></i>392条新动态</a>
+                               <a href="#" class="dynamic"><i></i>{{day[3]}}</a>
                                <a href="#" class="more">更多<i></i></a>
                            </div>
                        </div>
@@ -499,7 +447,7 @@
                            </div>
                            <a href="#" class="main-link"><i></i>我的十月新番打开方式一定有问题</a>
                            <div class="more-wrap">
-                               <a href="#" class="dynamic"><i></i>392条新动态</a>
+                               <a href="#" class="dynamic"><i></i>{{day[4]}}</a>
                                <a href="#" class="more">更多<i></i></a>
                            </div>
                        </div>
@@ -577,7 +525,7 @@
                            </div>
                            <a href="#" class="main-link"><i></i>我的十月新番打开方式一定有问题</a>
                            <div class="more-wrap">
-                               <a href="#" class="dynamic"><i></i>392条新动态</a>
+                               <a href="#" class="dynamic"><i></i>{{day[5]}}</a>
                                <a href="#" class="more">更多<i></i></a>
                            </div>
                        </div>
@@ -655,7 +603,7 @@
                            </div>
                            <a href="#" class="main-link"><i></i>我的十月新番打开方式一定有问题</a>
                            <div class="more-wrap">
-                               <a href="#" class="dynamic"><i></i>392条新动态</a>
+                               <a href="#" class="dynamic"><i></i>{{day[6]}}</a>
                                <a href="#" class="more">更多<i></i></a>
                            </div>
                        </div>
@@ -733,7 +681,7 @@
                            </div>
                            <a href="#" class="main-link"><i></i>我的十月新番打开方式一定有问题</a>
                            <div class="more-wrap">
-                               <a href="#" class="dynamic"><i></i>392条新动态</a>
+                               <a href="#" class="dynamic"><i></i>{{day[7]}}</a>
                                <a href="#" class="more">更多<i></i></a>
                            </div>
                        </div>
@@ -811,7 +759,7 @@
                            </div>
                            <a href="#" class="main-link"><i></i>我的十月新番打开方式一定有问题</a>
                            <div class="more-wrap">
-                               <a href="#" class="dynamic"><i></i>392条新动态</a>
+                               <a href="#" class="dynamic"><i></i>{{day[8]}}</a>
                                <a href="#" class="more">更多<i></i></a>
                            </div>
                        </div>
@@ -889,7 +837,7 @@
                            </div>
                            <a href="#" class="main-link"><i></i>我的十月新番打开方式一定有问题</a>
                            <div class="more-wrap">
-                               <a href="#" class="dynamic"><i></i>392条新动态</a>
+                               <a href="#" class="dynamic"><i></i>{{day[9]}}</a>
                                <a href="#" class="more">更多<i></i></a>
                            </div>
                        </div>
@@ -967,7 +915,7 @@
                            </div>
                            <a href="#" class="main-link"><i></i>我的十月新番打开方式一定有问题</a>
                            <div class="more-wrap">
-                               <a href="#" class="dynamic"><i></i>392条新动态</a>
+                               <a href="#" class="dynamic"><i></i>{{day[10]}}</a>
                                <a href="#" class="more">更多<i></i></a>
                            </div>
                        </div>
@@ -1055,6 +1003,7 @@
                     'slider_img3.png',
                     'slider_img4.png'
                 ],
+                day:{},
                 hots:{
                     dh:{},
                     yy:{},
@@ -1080,6 +1029,9 @@
                     yl:{},
                     ys:{},
                 },
+                tj:{
+
+                }
             }
 
         },
@@ -1128,11 +1080,33 @@
 
                     }
                 })
+            },
+            gettj(){
+                const _this = this;
+                let data = new URLSearchParams();
+                data.append("num", 6);
+                data.append("classify", "全站");
+                data.append("time", 3);
+                axios.post('http://localhost:8181/video/top', data).then(function (res) {
+                    if (res.data.code==200){
+                        _this.tj=res.data.data;
+                    }
+                })
+            },
+            getNewNum(){
+                const _this = this;
+                axios.post('http://localhost:8181/video/day').then(function (res) {
+                    if (res.data.code==200){
+                        _this.day=res.data.data;
+                    }
+                })
             }
         },
         created() {
             this.getHot();
             this.getTop();
+            this.gettj();
+            this.getNewNum();
         }
     }
 </script>

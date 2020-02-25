@@ -127,7 +127,8 @@
                                                     <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
                                                 </el-upload>
                                                 <div v-if="videoFlag==true">
-                                                    <el-progress :text-inside="true" :stroke-width="26" :percentage="videoUploadPercent"></el-progress>
+                                                    <el-progress :text-inside="true" :stroke-width="26"
+                                                                 :percentage="videoUploadPercent"></el-progress>
                                                 </div>
                                             </el-form-item>
                                             <el-form-item>
@@ -136,8 +137,97 @@
                                         </el-form>
                                     </div>
                                 </el-tab-pane>
-                                <el-tab-pane label="投稿管理" name="two">投稿管理</el-tab-pane>
-                                <el-tab-pane label="创作中心" name="three">创作中心</el-tab-pane>
+                                <el-tab-pane label="投稿管理" name="two">
+                                    <div style="margin:0 0 0 40px">
+                                        <ul class="pic-list__wrapper clearfix tab-cont__item tab-cont__cur">
+                                            <div v-for="dhitem in videos.content" :key="dhitem.value">
+                                                <li class="item">
+                                                    <a @click="playVideo(dhitem)" class="img-link">
+                                                        <img :src="dhitem.cover" alt="#">
+                                                        <span class="mask"></span>
+                                                        <span class="time">{{dhitem.duration}}</span>
+                                                    </a>
+                                                    <div class="img-info">
+                                                        <a href="#">{{dhitem.vname}}</a>
+                                                    </div>
+                                                    <div>
+                                                        <el-button type="info"
+                                                                   @click="updataDialogVisible = true,updVideo=dhitem">
+                                                            修改
+                                                        </el-button>
+                                                        <el-button type="danger"
+                                                                   @click="deleteDialogVisible = true,delVideo = dhitem">
+                                                            删除
+                                                        </el-button>
+                                                    </div>
+                                                </li>
+
+                                            </div>
+                                        </ul>
+                                        <el-pagination
+                                                layout="prev, pager, next"
+                                                :total="this.total"
+                                                @current-change="getPages"
+                                                :hide-on-single-page="this.xian"
+                                                :current-page="this.page">
+                                        </el-pagination>
+                                    </div>
+                                </el-tab-pane>
+                                <el-tab-pane label="数据中心" name="three">
+                                    <div>
+
+                                        <el-row :gutter="20">
+                                            <el-col :span="6"><div class="item-boby">
+                                                <div  class="bccol"
+                                                      style="padding-left: 8px; padding-right: 8px;">
+                                                    <div  class="section-item">
+                                                        <div  class="data-name">
+                                                            视频播放
+                                                            <!----></div>
+                                                        <div  class="text-content"><!----> <span
+                                                        >{{myData.hits}}</span></div>
+                                                    </div>
+                                                </div>
+                                            </div></el-col>
+                                            <el-col :span="6"><div class="item-boby">
+                                                <div  class="bccol"
+                                                      style="padding-left: 8px; padding-right: 8px;">
+                                                    <div  class="section-item">
+                                                        <div  class="data-name">
+                                                            评论数量
+                                                            <!----></div>
+                                                        <div  class="text-content"><!----> <span
+                                                        >{{myData.replies}}</span></div>
+                                                    </div>
+                                                </div>
+                                            </div></el-col>
+                                            <el-col :span="6"><div class="item-boby">
+                                                <div  class="bccol"
+                                                      style="padding-left: 8px; padding-right: 8px;">
+                                                    <div  class="section-item">
+                                                        <div  class="data-name">
+                                                            收藏数量
+                                                            <!----></div>
+                                                        <div  class="text-content"><!----> <span
+                                                        >{{myData.collect}}</span></div>
+                                                    </div>
+                                                </div>
+                                            </div></el-col>
+                                            <el-col :span="6"><div class="item-boby">
+                                                <div  class="bccol"
+                                                      style="padding-left: 8px; padding-right: 8px;">
+                                                    <div  class="section-item">
+                                                        <div  class="data-name">
+                                                            关注数量
+                                                            <!----></div>
+                                                        <div  class="text-content"><!----> <span
+                                                        >{{myData.fans}}</span></div>
+                                                    </div>
+                                                </div>
+                                            </div></el-col>
+                                        </el-row>
+                                    </div>
+                                </el-tab-pane>
                             </el-tabs>
                         </div>
                     </div>
@@ -150,6 +240,54 @@
                 </el-tab-pane>
             </el-tabs>
         </div>
+        <el-dialog
+                title="修改"
+                :visible.sync="updataDialogVisible"
+                width="30%"
+        >
+            <el-form ref="updVideo" :model="updVideo" label-width="80px">
+                <el-form-item label="标题">
+                    <el-input v-model="updVideo.vname"></el-input>
+                </el-form-item>
+                <el-form-item label="分区">
+                    <el-select v-model="updVideo.classify" placeholder="请选择活动区域">
+                        <el-option label="动画" value="动画"></el-option>
+                        <el-option label="音乐" value="音乐"></el-option>
+                        <el-option label="舞蹈" value="舞蹈"></el-option>
+                        <el-option label="游戏" value="游戏"></el-option>
+                        <el-option label="科技" value="科技"></el-option>
+                        <el-option label="生活" value="生活"></el-option>
+                        <el-option label="鬼畜" value="鬼畜"></el-option>
+                        <el-option label="时尚" value="时尚"></el-option>
+                        <el-option label="广告" value="广告"></el-option>
+                        <el-option label="娱乐" value="娱乐"></el-option>
+                        <el-option label="影视" value="影视"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="原创">
+                    <el-switch v-model="updVideo.original"></el-switch>
+                </el-form-item>
+                <el-form-item label="简介">
+                    <el-input type="textarea" v-model="updVideo.intro"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+            <el-button @click="updataDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="updataVideo()">确 定</el-button>
+          </span>
+        </el-dialog>
+
+        <el-dialog
+                title="提示"
+                :visible.sync="deleteDialogVisible"
+                width="30%"
+        >
+            <span>确认删除本视频</span>
+            <span slot="footer" class="dialog-footer">
+            <el-button @click="deleteDialogVisible = false">取 消</el-button>
+            <el-button type="primary" @click="deleteVideo()">确 定</el-button>
+          </span>
+        </el-dialog>
         <foot-bar></foot-bar>
     </div>
 </template>
@@ -166,6 +304,34 @@
         },
         data() {
             return {
+                myData:{
+                    fans:0,
+                    hits:0,
+                    collect:0,
+                    replies:0,
+                },
+                delVideo: {
+                    vurl: '',
+                    vname: '',
+                    classify: '',
+                    original: true,
+                    intro: '',
+                    cover: '',
+                },
+                updVideo: {
+                    vurl: '',
+                    vname: '',
+                    classify: '',
+                    original: true,
+                    intro: '',
+                    cover: '',
+                },
+                total: 0,
+                page: 0,
+                xian: true,
+                updataDialogVisible: false,
+                deleteDialogVisible: false,
+                videos: {},
                 videoFlag: false, //是否显示进度条
                 videoUploadPercent: 0, //进度条的进度，
                 isShowUploadVideo: false, //
@@ -192,13 +358,52 @@
                     original: true,
                     intro: '',
                     cover: '',
-                    author:'',
-                    duration:''
+                    author: '',
+                    duration: ''
                 }
             };
         },
         methods: {
-
+            deleteVideo() {
+                const _this = this;
+                axios.post('http://localhost:8181/video/delete', _this.delVideo).then(function (res) {
+                    if (res.data.code == 200) {
+                        _this.$message({
+                            message: '删除成功',
+                            type: 'success'
+                        });
+                        _this.deleteDialogVisible = false;
+                        _this.getMyVideos(_this.page);
+                    }
+                })
+            },
+            getMyData(){
+                const _this = this;
+                let data = new URLSearchParams();
+                data.append('uid', this.userForm.uid);
+                axios.post('http://localhost:8181/video/data', data).then(function (res) {
+                    if (res.data.code == 200) {
+                        console.log(res.data.data)
+                        _this.myData.hits=res.data.data[0][0];
+                        _this.myData.collect=res.data.data[0][1];
+                        _this.myData.replies=res.data.data[0][2];
+                        _this.myData.fans=_this.userForm.fans;
+                    }
+                })
+            },
+            updataVideo() {
+                const _this = this;
+                axios.post('http://localhost:8181/video/updata', _this.updVideo).then(function (res) {
+                    if (res.data.code == 200) {
+                        _this.$message({
+                            message: '修改成功',
+                            type: 'success'
+                        });
+                        _this.updataDialogVisible = false;
+                        _this.getMyVideos(_this.page);
+                    }
+                })
+            },
             beforeUploadVideo(file) {
                 const isLt300M = file.size / 1024 / 1024 < 300;
                 if (['video/mp4', 'video/flv', 'video/avi', 'video/wmv'].indexOf(file.type) == -1) {
@@ -213,20 +418,19 @@
             //进度条
             uploadVideoProcess(event, file, fileList) {
                 this.videoFlag = true;
-                this.videoUploadPercent = parseInt( file.percentage.toFixed(0));
+                this.videoUploadPercent = parseInt(file.percentage.toFixed(0));
             },
             handleVideoSuccess(res, file) {
 //获取上传图片地址
                 this.videoUploadPercent = 100;
                 if (res.code == 200) {
-                    this.videoForm.vurl=res.data.vurl;
-                    this.videoForm.duration=res.data.duration;
+                    this.videoForm.vurl = res.data.vurl;
+                    this.videoForm.duration = res.data.duration;
                 } else {
                     this.$message.error('视频上传失败，请重新上传！');
                 }
             },
             handleClick(tab, event) {
-                console.log(tab, event);
             },
             init() {
                 if (typeof this.$session.get('user') !== 'undefined') {
@@ -263,11 +467,9 @@
                 })
             },
             imgsuccess(response, file, fileList) {
-                console.log(response.data);
-                this.imageUrl = response.data;
+                this.$session.get('user').image = response.data;
             },
             handleAvatarSuccess(res, file) {
-                console.log(res.data);
                 this.videoForm.cover = res.data;
             },
             beforeAvatarUpload(file) {
@@ -282,19 +484,39 @@
                 }
                 return isJPG && isLt2M;
             },
-            contribute(){
+            contribute() {
                 const _this = this;
-                this.videoForm.author=this.userForm;
+                this.videoForm.author = this.userForm;
                 axios.post('http://localhost:8181/video/contribute', _this.videoForm).then(function (res) {
-                    if(res.data.code==200){
+                    if (res.data.code == 200) {
                         _this.$message({
                             message: '投稿成功',
                             type: 'success'
                         });
-                    }else {
+                    } else {
                         _this.$message.error(res.data.prompt);
                     }
                 })
+            },
+            getMyVideos(num) {
+                const _this = this;
+                let data = new URLSearchParams();
+                data.append('uid', this.userForm.uid);
+                data.append('num', num);
+                axios.post('http://localhost:8181/video/my', data).then(function (res) {
+                    if (res.data.code == 200) {
+                        _this.videos = res.data.data;
+                        _this.page = res.data.data.pageable.pageNumber + 1;
+                        _this.total = res.data.data.totalPages * 10;
+                        if (_this.total >= 10) {
+                            _this.xian = false;
+                        }
+                        _this.$set(_this.videos, 'videos', res.data.data)
+                    }
+                })
+            },
+            getPages(val) {
+                this.getMyVideos(val);
             }
         },
         created() {
@@ -303,11 +525,36 @@
                 this.activeName = '4';
                 this.activeName2 = this.$route.query.activeName2;
             }
+            this.getMyVideos(1);
+            this.getMyData();
         }
     }
 </script>
 
 <style scoped>
+    .bccol{
+        display: block;
+    }
+    .section-item{
+        vertical-align: middle;
+        background: rgba(0,161,214,.03);
+        border-radius: 4px;
+        padding: 16px 12.5%;
+    }
+    .data-name{
+        font-size: 14px;
+        line-height: 18px;
+        color: #757575;
+    }
+    .text-content{
+        position: relative;
+        margin-top: 12px;
+        margin-bottom: 16px;
+        line-height: 32px;
+        font-size: 28px;
+        color: #00a1d6;
+        font-weight: 600;
+    }
     .person_main {
         overflow: hidden;
         width: 980px;

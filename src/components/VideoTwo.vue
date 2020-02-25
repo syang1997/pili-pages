@@ -38,7 +38,8 @@
                             </a>
                         </div>
                         <div>
-                            <el-button type="danger" icon="el-icon-plus" plain>关注</el-button>
+                            <el-button v-if="!isConcern" @click="addConcern" type="danger" icon="el-icon-plus" plain>关注<span v-if="videomsg.author.fans>0">{{hitFormat(videomsg.author.fans)}}</span></el-button>
+                            <el-button v-if="isConcern" @click="delConcern" type="info" icon="el-icon-plus" plain>已关注<span v-if="videomsg.author.fans>0">{{hitFormat(videomsg.author.fans)}}</span></el-button>
                         </div>
                     </div>
                 </el-col>
@@ -71,17 +72,22 @@
         <div class="video-down">
             <div class="video-toolbar">
                 <div class="ops">
-                    <i class="el-icon-chat-dot-round" style="font-size: 28px;"></i><span> 123</span>
-                    <i class="el-icon-star-off" style="font-size: 28px;"></i><span> 123</span>
+                    <i class="el-icon-chat-dot-round" style="font-size: 28px;"></i><span> {{videomsg.replies}}</span>
+                    <span v-if="!isCollect" @click="addCollect">
+                    <i  class="el-icon-star-off"  style="font-size: 28px;"></i><span> {{videomsg.collect}}</span>
+                    </span>
+                    <span v-if="isCollect" @click="delCollect">
+                    <i  class="el-icon-star-on"  style="font-size: 28px;"></i><span> {{videomsg.collect}}</span>
+                    </span>
                 </div>
             </div>
             <el-collapse>
                 <el-collapse-item title="视频简介" name="1">
-                    <div>与现实生活一致：与现实生活的流程、逻辑保持一致，遵循用户习惯的语言和概念；</div>
+                    <div>{{videomsg.intro}}</div>
                 </el-collapse-item>
             </el-collapse>
             <div class="comment-send">
-                <el-form :inline="true" class="demo-form-inline">
+                <el-form :inline="true" :model="comment" class="demo-form-inline">
                     <el-form-item>
                         <div>
                             <el-avatar :size="55"
@@ -89,96 +95,199 @@
                         </div>
                     </el-form-item>
                     <el-form-item>
-                        <el-input type="textarea" style="width: 520px;"></el-input>
+                        <el-input type="textarea" v-model="comment.msg" style="width: 520px;"></el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button style="height: 54px;" type="primary">评论</el-button>
+                        <el-button style="height: 54px;" @click="sendComment()" type="primary">评论</el-button>
                     </el-form-item>
                 </el-form>
             </div>
-            <el-tabs v-model="activeName">
+            <el-tabs v-model="activeName" :stretch="true"  @tab-click="handleClick">
                 <el-tab-pane label="按热度排序" name="first">
                     <div class="block">
-                        <div class="comment-item">
+                        <div v-if="videomsg.replies==0" class="no-more-reply">看看下面~来发评论吧</div>
+
+                        <div v-for="(item,index) in dcomments" :key="item.value" class="comment-item">
                             <div class="user-face"><div>
                                 <el-avatar :size="55"
-                                           :src="user.image"></el-avatar>
+                                           :src="item.publisher.image"></el-avatar>
                             </div></div>
                             <div class="con">
                                 <div class="user">
-                                    test
+                                    {{item.publisher.name}}
                                 </div>
-                                <p class="text">建议改成 祖 安 男 妈 马</p>
-                                <div class="info">
-                                    <span class="re">2012</span>
-                                    <span class="re"><i class="el-icon-thumb"></i>12</span>
-                                    <span class="re">回复</span>
-                                </div>
-                                <div class="user-face"><div>
-                                    <el-avatar :size="35"
-                                               :src="user.image"></el-avatar>
-                                </div></div>
-                                <div class="cont">
-                                    <div class="user">
-                                        test
-                                    </div>
-                                    <p class="text">@test:建议改成 祖 安 男 妈 马</p>
+                                <p class="text">{{item.msg}}</p>
+                                <div >
                                     <div class="info">
-                                        <span class="re">2012</span>
-                                        <span class="re"><i class="el-icon-thumb"></i>12</span>
-                                        <span class="re">回复</span>
+                                        <span class="re">{{dateFormat(item.createtime)}}</span>
+                                        <span class="re" @click="dianzhan(0,item)"><i style="font-size: 15px;" class="el-icon-thumb"></i><span v-if="item.praise!=0">{{item.praise}}</span></span>
+                                        <span class="re" @click="getRevert(item.cid,item.publisher)"><i style="font-size: 15px;" class="el-icon-chat-line-round"></i><span v-if="item.replies!=0">{{item.replies}}</span></span>
+
+                                        <el-collapse style="border-top: 0px;margin: -39px 0 0 0;">
+                                            <el-collapse-item v-if="item.replies==0" :disabled="true">
+                                                <template slot="title" >
+                                                    <div style="width: 100px;margin: 0 0 0 545px">
+                                                        展开
+                                                    </div>
+                                                </template>
+                                                <div v-for="(sitem,sindex) in item.sends" :key="sitem.value">
+                                                    <div class="user-face"><div>
+                                                        <el-avatar :size="35"
+                                                                   :src="sitem.publisher.image"></el-avatar>
+                                                    </div></div>
+                                                    <div class="cont">
+                                                        <div class="user">
+                                                            {{sitem.publisher.name}}
+                                                        </div>
+                                                        <p class="text"><span>@{{sitem.acceptor.name}}:</span>{{sitem.msg}}</p>
+                                                        <div class="info">
+                                                            <span class="re">{{dateFormat(sitem.createtime)}}</span>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-collapse-item>
+                                            <el-collapse-item v-if="item.replies!=0"  :disabled="false">
+                                                <template slot="title" >
+                                                    <div style="width: 100px;margin: 0 0 0 545px">
+                                                        展开
+                                                    </div>
+                                                </template>
+                                                <div v-for="(sitem,sindex) in item.sends" :key="sitem.value">
+                                                    <div class="user-face"><div>
+                                                        <el-avatar :size="35"
+                                                                   :src="sitem.publisher.image"></el-avatar>
+                                                    </div></div>
+                                                    <div class="cont">
+                                                        <div class="user">
+                                                            {{sitem.publisher.name}}
+                                                        </div>
+                                                        <p class="text"><span>@{{sitem.acceptor.name}}:</span>{{sitem.msg}}</p>
+                                                        <div class="info">
+                                                            <span class="re">{{dateFormat(sitem.createtime)}}</span>
+                                                            <span class="re" @click="dianzhan(1,sitem)"><i style="font-size: 15px;" class="el-icon-thumb"></i><span v-if="item.praise!=0">{{sitem.praise}}</span></span>
+                                                            <span class="re" @click="getRevert(item.cid,sitem.publisher)"><i style="font-size: 15px;" class="el-icon-chat-line-round"></i></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-collapse-item>
+                                        </el-collapse>
                                     </div>
+
                                 </div>
-                            </div>
-                        </div>
-                        <div class="comment-item">
-                            <div class="user-face"><div>
-                                <el-avatar :size="55"
-                                           :src="user.image"></el-avatar>
-                            </div></div>
-                            <div class="con">
-                                <div class="user">
-                                    test
-                                </div>
-                                <p class="text">建议改成 祖 安 男 妈 马</p>
-                                <div class="info">
-                                    <span class="re">2012</span>
-                                    <span class="re"><i class="el-icon-thumb"></i>12</span>
-                                    <span class="re">回复</span>
-                                </div>
-                                <div class="user-face"><div>
-                                    <el-avatar :size="35"
-                                               :src="user.image"></el-avatar>
-                                </div></div>
-                                <div class="cont">
-                                    <div class="user">
-                                        test
-                                    </div>
-                                    <p class="text">建议改成 祖 安 男 妈 马</p>
-                                    <div class="info">
-                                        <span class="re">2012</span>
-                                        <span class="re"><i class="el-icon-thumb"></i>12</span>
-                                        <span class="re">回复</span>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
                         <el-pagination
                                 layout="prev, pager, next"
-                                :total="50">
+                                :total="this.Dtotal"
+                                @current-change="getZhanPage"
+                                :hide-on-single-page="this.Dxian"
+                                :current-page="this.Dpage">
                         </el-pagination>
                     </div>
                 </el-tab-pane>
                 <el-tab-pane label="按时间排序" name="second">
                     <div class="block">
+                        <div v-if="videomsg.replies==0" class="no-more-reply">看看下面~来发评论吧</div>
+                        <div v-for="(item,index) in tcomments" :key="item.value" class="comment-item">
+                            <div class="user-face"><div>
+                                <el-avatar :size="55"
+                                           :src="item.publisher.image"></el-avatar>
+                            </div></div>
+                            <div class="con">
+                                <div class="user">
+                                    {{item.publisher.name}}
+                                </div>
+                                <p class="text">{{item.msg}}</p>
+                                <div >
+                                    <div class="info">
+                                        <span class="re">{{dateFormat(item.createtime)}}</span>
+                                        <span class="re" @click="dianzhan(0,item)"><i style="font-size: 15px;" class="el-icon-thumb"></i><span v-if="item.praise!=0">{{item.praise}}</span></span>
+                                        <span class="re" @click="getRevert(item.cid,item.publisher)"><i style="font-size: 15px;" class="el-icon-chat-line-round"></i><span v-if="item.replies!=0">{{item.replies}}</span></span>
+
+                                        <el-collapse style="border-top: 0px;margin: -39px 0 0 0;">
+                                            <el-collapse-item v-if="item.replies==0" :disabled="true">
+                                                <template slot="title" >
+                                                    <div style="width: 100px;margin: 0 0 0 545px">
+                                                        展开
+                                                    </div>
+                                                </template>
+                                                <div v-for="(sitem,sindex) in item.sends" :key="sitem.value">
+                                                    <div class="user-face"><div>
+                                                        <el-avatar :size="35"
+                                                                   :src="sitem.publisher.image"></el-avatar>
+                                                    </div></div>
+                                                    <div class="cont">
+                                                        <div class="user">
+                                                            {{sitem.publisher.name}}
+                                                        </div>
+                                                        <p class="text"><span>@{{sitem.acceptor.name}}:</span>{{sitem.msg}}</p>
+                                                        <div class="info">
+                                                            <span class="re">{{dateFormat(sitem.createtime)}}</span>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-collapse-item>
+                                            <el-collapse-item v-if="item.replies!=0"  :disabled="false">
+                                                <template slot="title" >
+                                                    <div style="width: 100px;margin: 0 0 0 545px">
+                                                        展开
+                                                    </div>
+                                                </template>
+                                                <div v-for="(sitem,sindex) in item.sends" :key="sitem.value">
+                                                    <div class="user-face"><div>
+                                                        <el-avatar :size="35"
+                                                                   :src="sitem.publisher.image"></el-avatar>
+                                                    </div></div>
+                                                    <div class="cont">
+                                                        <div class="user">
+                                                            {{sitem.publisher.name}}
+                                                        </div>
+                                                        <p class="text"><span>@{{sitem.acceptor.name}}:</span>{{sitem.msg}}</p>
+                                                        <div class="info">
+                                                            <span class="re">{{dateFormat(sitem.createtime)}}</span>
+                                                            <span class="re" @click="dianzhan(1,sitem)"><i style="font-size: 15px;" class="el-icon-thumb"></i><span v-if="item.praise!=0">{{sitem.praise}}</span></span>
+                                                            <span class="re" @click="getRevert(item.cid,sitem.publisher)"><i style="font-size: 15px;" class="el-icon-chat-line-round"></i></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </el-collapse-item>
+                                        </el-collapse>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
                         <el-pagination
                                 layout="prev, pager, next"
-                                :total="50">
+                                :total="this.Ttotal"
+                                @current-change="getTimePage"
+                                :hide-on-single-page="this.Txian"
+                                :current-page="this.Tpage">
                         </el-pagination>
                     </div>
                 </el-tab-pane>
             </el-tabs>
         </div>
+        <el-dialog
+                :title="'回复：'+this.revert.acceptor.name"
+                :visible.sync="dialogVisible"
+                width="30%">
+            <el-input
+                    type="textarea"
+                    :rows="2"
+                    placeholder="请输入内容"
+                    v-model="revert.msg">
+            </el-input>
+            <span slot="footer" class="dialog-footer">
+                                                <el-button @click="dialogVisible = false">取 消</el-button>
+                                                <el-button type="primary" @click="sendRevert()">确 定</el-button>
+                                              </span>
+        </el-dialog>
         <foot-bar></foot-bar>
     </div>
 </template>
@@ -193,11 +302,35 @@
     export default {
         data() {
             return {
+                isConcern:false,
+                isCollect:false,
+                Ttotal:0,
+                Dtotal:0,
+                Tpage:0,
+                Dpage:0,
+                Txian:true,
+                Dxian:true,
                 activeName: 'first',
+                dialogVisible:false,
                 dp: {},
                 danmus: {},
                 dnum: 0,
                 user: {},
+                comments:{},
+                dcomments:{},
+                tcomments:{},
+                comment:{
+                    msg:'',
+                    vid:0,
+                    acceptor:{},
+                    publisher:{},
+                },
+                revert:{
+                    msg:'',
+                    superior:0,
+                    acceptor:{},
+                    publisher:{},
+                },
                 videomsg: {
                     vid: 0,
                     vurl: '',
@@ -215,6 +348,7 @@
                     createtime: '',
                     hits: 0,
                     collect: 0,
+                    replies:0
                 },
             }
         },
@@ -223,6 +357,7 @@
             if (typeof this.$route.query.vn !== 'undefined') {
                 this.videomsg.vid = this.$route.query.vn;
                 this.getVideo();
+                this.getComments("zhan",1);
             }
             if (typeof this.$route.query.vu !== 'undefined') {
                 var url = this.$route.query.vu;
@@ -242,15 +377,204 @@
                 axios.get('/dans/v3/?id=3401bcf1-2a37-4e9f-8308-ab2111acbf09').then(function (res) {
                     _this.danmus = _this.dp.danmaku.dan;
                     _this.dnum = _this.danmus.length;
-                })
+                });
             }
         },
         methods: {
+            checkConcern(fans,up){
+                let data=new URLSearchParams();
+                data.append('fans',fans);
+                data.append('up',up);
+                const _this = this;
+                axios.post('http://localhost:8181/concern/check', data).then(function (response) {
+                    if (response.data.code == 200) {
+                        _this.isConcern=response.data.data;
+                    }
+                })
+            },
+            addConcern(){
+                let data=new URLSearchParams();
+                data.append('fans',this.user.uid);
+                data.append('up',this.videomsg.author.uid);
+                const _this = this;
+                axios.post('http://localhost:8181/concern/add', data).then(function (response) {
+                    if (response.data.code == 200) {
+                        _this.isConcern=true;
+                        _this.videomsg.author.fans++;
+                    }
+                })
+            },
+            delConcern(){
+                let data=new URLSearchParams();
+                data.append('fans',this.user.uid);
+                data.append('up',this.videomsg.author.uid);
+                const _this = this;
+                axios.post('http://localhost:8181/concern/cancel', data).then(function (response) {
+                    if (response.data.code == 200) {
+                        _this.isConcern=false;
+                        _this.videomsg.author.fans--;
+                    }
+                })
+            },
+            checkCollect(uid,vid){
+                let data=new URLSearchParams();
+                data.append('uid',uid);
+                data.append('vid',vid);
+                const _this = this;
+                axios.post('http://localhost:8181/collect/check', data).then(function (response) {
+                    if (response.data.code == 200) {
+                        _this.isCollect=response.data.data;
+                    }
+                })
+            },
+            addCollect(){
+                let data=new URLSearchParams();
+                data.append('uid',this.user.uid);
+                data.append('vid',this.videomsg.vid);
+                const _this = this;
+                axios.post('http://localhost:8181/collect/add', data).then(function (response) {
+                    if (response.data.code == 200) {
+                        _this.isCollect=true;
+                        _this.videomsg.collect++;
+                        _this.$message({
+                            message: '收藏成功',
+                            type: 'success'
+                        });
+                    }
+                })
+            },
+            delCollect(){
+                let data=new URLSearchParams();
+                data.append('uid',this.user.uid);
+                data.append('vid',this.videomsg.vid);
+                const _this = this;
+                axios.post('http://localhost:8181/collect/cancel', data).then(function (response) {
+                    if (response.data.code == 200) {
+                        _this.isCollect=false;
+                        _this.videomsg.collect--;
+                        _this.$message({
+                            message: '取消收藏',
+                            type: 'info'
+                        });
+                    }
+                })
+            },
+            getTimePage(val){
+                this.getComments('time',val);
+            },
+            getZhanPage(val){
+                this.getComments('zhan',val);
+            },
+            handleClick(tab, event){
+                if (tab.paneName=='second') {
+                    if(JSON.stringify(this.tcomments)=='{}'){
+                        this.getComments('time',1);
+                    }
+                }
+                if (tab.paneName=='first') {
+                    if(JSON.stringify(this.dcomments)=='{}'){
+                        this.getComments('zhan',1);
+                    }
+                }
+            },
+            getRevert(cid,uid){
+              this.dialogVisible=true;
+              this.revert.superior=cid;
+              this.revert.acceptor=uid;
+              this.revert.publisher=this.user;
+            },
+            sendRevert(){
+                const _this = this;
+                axios.post('http://localhost:8181/revert/send', _this.revert).then(function (response) {
+                    if (response.data.code == 200) {
+                        _this.$message({
+                            message: '发布成功',
+                            type: 'success'
+                        });
+                        _this.revert.msg='';
+                        _this.dialogVisible=false;
+                    }
+                })
+            },
+            dianzhan(type,id){
+                let data=new URLSearchParams();
+              if (type==0){
+                  data.append("id",id.cid);
+                  const _this = this;
+                  axios.post('http://localhost:8181/comment/zhan',data).then(function (response) {
+                      if (response.data.code == 200) {
+                          _this.$message({
+                              message: '点赞成功成功',
+                              type: 'success'
+                          });
+                          id.praise++;
+                      }
+                  })
+              } else if(type==1){
+                  const _this = this;
+                  data.append("id",id.rid);
+                  axios.post('http://localhost:8181/revert/zhan',data).then(function (response) {
+                      if (response.data.code == 200) {
+                          _this.$message({
+                              message: '点赞成功成功',
+                              type: 'success'
+                          });
+                          id.praise++;
+                      }
+                  })
+              }
+            },
+            sendComment(){
+                const _this = this;
+                //一级评论初始化
+                this.comment.acceptor=this.videomsg.author;
+                this.comment.publisher=this.user;
+                this.comment.vid=this.videomsg.vid;
+                axios.post('http://localhost:8181/comment/send', _this.comment).then(function (response) {
+                    if (response.data.code == 200) {
+                        _this.$message({
+                            message: '发布成功',
+                            type: 'success'
+                        });
+                        _this.comment.msg='';
+                    }
+                })
+            },
+            getComments(type,num){
+                const _this = this;
+                let data=new URLSearchParams();
+                data.append("vid",this.videomsg.vid);
+                data.append("type",type);
+                data.append("num",num);
+                axios.post('http://localhost:8181/comment/all', data).then(function (response) {
+                    if (response.data.code == 200) {
+                        if (type=='time'){
+                            _this.tcomments=response.data.data.content;
+                            _this.Tpage=response.data.data.pageable.pageNumber+1;
+                            _this.Ttotal=response.data.data.totalPages*10;
+                            if (_this.Ttotal>=10){
+                                _this.Txian=false;
+                            }
+                            _this.$set(_this.tcomments,'tcomments',response.data.data.content)
+                        } else if (type=='zhan'){
+                            _this.dcomments=response.data.data.content;
+                            _this.Dpage=response.data.data.pageable.pageNumber+1;
+                            _this.Dtotal=response.data.data.totalPages*10;
+                            if (_this.Dtotal>=10){
+                                _this.Dxian=false;
+                            }
+                            _this.$set(_this.dcomments,'dcomments',response.data.data.content)
+                        }
+                    }
+                })
+            },
             getVideo() {
                 const _this = this;
                 axios.post('http://localhost:8181/video/play', _this.videomsg).then(function (response) {
                     if (response.data.code == 200) {
                         _this.videomsg = response.data.data;
+                        _this.checkConcern(_this.user.uid,_this.videomsg.author.uid);
+                        _this.checkCollect(_this.user.uid,_this.videomsg.vid);
                     }
                 })
             }
@@ -356,7 +680,12 @@
         width: 680px;
         margin: 16px 10px 16px 267px;
     }
-
+    .no-more-reply{
+        color: #99a2aa;
+        text-align: center;
+        padding: 30px 0;
+        font-size: 12px;
+    }
     .video-toolbar {
         line-height: 30px;
         height: 28px;

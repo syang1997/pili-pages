@@ -100,7 +100,7 @@
                                         message: '注册成功',
                                         type: 'success'
                                     });
-                                    _this.$router.push({ path:'/test'  })
+                                    _this.$router.push({ path:'/'  })
                                 }
                                 if(response.data.code!='200'){
                                     _this.$message.error(response.data.prompt);
